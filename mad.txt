@@ -1,0 +1,303 @@
+Implict:
+Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://en.wikipedia.org/wiki/English_Wikipedia"));
+                startActivity(intent);
+
+explicit sender activity:
+Intent intent = new Intent(MainActivity.this, MainActivity2.class);
+               intent.putExtra("str",s);
+                startActivity(intent);
+
+reciver activity:
+Intent intent = getIntent();
+        String s = intent.getStringExtra("str");
+
+Menu:
+option:
+public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menubar,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int item_id = item.getItemId();
+        switch (item_id){
+            case R.id.item1:
+                Toast.makeText(MainActivity.this,"Item1",Toast.LENGTH_SHORT).show();
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+pop:
+PopupMenu popupMenu = new PopupMenu(MainActivity2.this, button3);
+                popupMenu.getMenuInflater().inflate(R.menu.menubar,popupMenu.getMenu());
+                popupMenu.show();
+
+notification:
+Notification notification = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notification = new Notification.Builder(this).setSmallIcon(R.drawable.ic_launcher_background).setContentText("Hello").setSubText("This is new nottifaction").setChannelId(channelid).build();
+            nm.createNotificationChannel(new NotificationChannel(channelid,"new channel",NotificationManager.IMPORTANCE_HIGH));
+
+        }
+        nm.notify(notification_id,notification);
+
+shared prefernces:
+String s = editText.getText().toString();
+                SharedPreferences shr = getSharedPreferences("Demo", MODE_PRIVATE);
+                SharedPreferences.Editor editor = shr.edit();
+                editor.putString("str", s);
+                editor.apply();
+                SharedPreferences shr1 = getSharedPreferences("Demo", MODE_PRIVATE);
+                String x = shr1.getString("str",null);
+                Toast.makeText(MainActivity.this,x,Toast.LENGTH_SHORT).show();
+
+Broadcast:
+Sender:
+ Intent intent = new Intent();
+ intent.setAction("com.example.madlab");
+ intent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+ sendBroadcast(intent);
+
+reciver:
+  IntentFilter intentFilter = new IntentFilter("com.example.madlab");
+        MyReceiver myReceiver = new MyReceiver();
+        registerReceiver(myReceiver,intentFilter);
+
+
+asyc task:
+
+java: 
+
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+
+public class MainActivity extends AppCompatActivity {
+    Button b1;
+    EditText e1;
+    TextView v1;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        b1=findViewById(R.id.button1);
+        e1=findViewById(R.id.editText1);
+
+        b1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AsynckTaskRunner runner=new AsynckTaskRunner();
+                String sleeptime= e1.getText().toString();
+                runner.execute(sleeptime);
+            }
+        });
+
+
+    }
+
+    private class AsynckTaskRunner extends AsyncTask<String, String, String> {
+        ProgressDialog pr;
+        @Override
+        protected String doInBackground(String... strings) {
+            publishProgress("slepping ...");
+            int time=Integer.parseInt(strings[0])*1000;
+            try {
+                Thread.sleep(time);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            pr=ProgressDialog.show(MainActivity.this,"Title","sleeping for time"+e1.getText().toString());
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            pr.dismiss();
+            super.onPostExecute(s);
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+
+            super.onProgressUpdate(values);
+        }
+
+    }
+
+}
+
+xml:
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+
+    <TextView
+            android:text="Enter time in sec"
+
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView1"
+
+    />
+    <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text="Name"
+            android:ems="10"
+            android:layout_marginLeft="140dp"
+            android:id="@+id/editText1"
+
+
+    />
+    <Button
+            android:text="Button"
+            android:layout_marginTop="90dp"
+            android:layout_marginLeft="150dp"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button1"/>
+    
+</RelativeLayout>
+
+
+appbar:
+java:
+package com.example.asynctask;
+
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.*;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        @SuppressLint({"MissingInflatedId", "LocalSuppress"})
+        Spinner spinner = findViewById(R.id.sp);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.friebds, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        spinner.setAdapter(adapter);
+
+
+        TextView tv = findViewById(R.id.textView);
+        registerForContextMenu(tv);
+
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getMenuInflater().inflate(R.menu.menufile, menu);
+
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menufile, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item1:
+                Toast.makeText(getApplicationContext(), "hii", Toast.LENGTH_SHORT).show();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    public void popupshow(View v) {
+        PopupMenu popupMenu = new PopupMenu(this, v);
+        popupMenu.inflate(R.menu.menufile);
+        popupMenu.show();
+
+    }
+}
+
+xml:
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+    <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+    <Button
+            android:text="Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="popupshow"
+            android:id="@+id/button" tools:layout_editor_absoluteY="276dp"
+            tools:layout_editor_absoluteX="16dp"/>
+    <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/textView" tools:layout_editor_absoluteY="210dp"
+            tools:layout_editor_absoluteX="43dp"/>
+
+</LinearLayout>
+
+
+menufile.xml:
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Item" android:id="@+id/item1" app:showAsAction="always"
+          android:icon="@android:drawable/btn_star_big_on"/>
+    <item android:title="Item" android:id="@+id/item2" app:showAsAction="always"
+          android:icon="@android:drawable/ic_input_add"/>
+    <item android:title="Item" android:id="@+id/item3"/>
+</menu>
+
+
+string.xml:
+<string-array name="friebds">
+        <item>India</item>
+        <item>pakistan</item>
+    </string-array>
+
+
+
